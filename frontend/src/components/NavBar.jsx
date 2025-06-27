@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 const Navbar = () => {
   return (
-    <div className="navbar bg-neutral text-neutral-content">
+    <div className="navbar bg-primary text-primary-content">
       <div className="flex-1">
         <Link to="/" className="text-xl font-bold mr-6 hover:text-green-300 px-4">
           Serenaid
@@ -21,10 +21,10 @@ const Navbar = () => {
       </div>
 
       <div className="flex gap-4 px-4">
-        <Link to="/login" className="btn btn-sm btn-outline">
+        <Link to="/login" className="btn btm-nav-label btn-neutral">
           Login
         </Link>
-        <Link to="/signup" className="btn btn-sm btn-outline">
+        <Link to="/signup" className="btn btm-nav-label btn-neutral">
           Signup
         </Link>
       </div>
