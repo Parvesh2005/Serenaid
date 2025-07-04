@@ -1,12 +1,13 @@
 import { useState } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { UserAuth } from "../context/AuthContex";
+import { Loader } from "lucide-react";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState();
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -21,19 +22,23 @@ const Signup = () => {
       const result = await signUpNewUser(email, password);
 
       if (result.success) {
-        navigate('/dashboard');
+        navigate("/dashboard");
+      } else {
+        console.log(result);
+        if (result.error.code === "user_already_exists") setError("Email already registered");
+        else setError("Sign-up failed");
       }
-    } catch(error) {
-      setError("An error occured")
+    } catch (error) {
+      setError("An error occurred");
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   return (
-    <div className="py-24 bg-base-200 flex items-center justify-center">
-      <div className="card w-full max-w-sm shadow-2xl bg-base-100">
-        <form onSubmit = {handleSignUp} className="card-body">
+    <div className="py-24 bg-black flex items-center justify-center">
+      <div className="card w-full max-w-sm shadow-2xl bg-base-200">
+        <form onSubmit={handleSignUp} className="card-body">
           <h2 className="text-2xl font-bold text-center text-primary">Sign Up</h2>
 
           <div className="form-control">
@@ -41,7 +46,7 @@ const Signup = () => {
               <span className="label-text">Email</span>
             </label>
             <input
-              onChange = {(e) => setEmail(e.target.value)}
+              onChange={(e) => setEmail(e.target.value)}
               type="email"
               placeholder="Enter your email"
               className="input input-bordered"
@@ -54,7 +59,7 @@ const Signup = () => {
               <span className="label-text">Password</span>
             </label>
             <input
-              onChange = {(e) => setPassword(e.target.value)}
+              onChange={(e) => setPassword(e.target.value)}
               type="password"
               placeholder="Enter your password"
               className="input input-bordered"
@@ -63,10 +68,25 @@ const Signup = () => {
           </div>
 
           <div className="form-control mt-4">
-            <button type = "submit" disabled = {loading} className="btn btn-primary">Sign Up</button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="btn btn-primary flex items-center justify-center gap-2"
+            >
+              {loading ? (
+                <>
+                  <Loader className="w-4 h-4 animate-spin" />
+                  Signing Up...
+                </>
+              ) : (
+                "Sign Up"
+              )}
+            </button>
           </div>
 
-          {error && <p className = "text-red-600 text-center pt-4"> {error} </p>}
+          {error && (
+            <p className="text-red-600 text-center pt-4">{error}</p>
+          )}
 
           <p className="text-sm text-center mt-2">
             Already have an account?{" "}

@@ -9,15 +9,21 @@ import PrivateRoute from "./components/PrivateRoute";
 
 const App = () => {
   return (
-      <>
+    <div className="flex flex-col min-h-screen bg-black">
+      {/* <div className="absolute inset-0 -z-10 h-full w-full bg-[radial-gradient(125%_125%_at_50%_10%,#000_60%,#00FF9D40_100%)]" />*/}
       <Navbar />
+      
       <Routes>
-        <Route path = "/" element = {<Home />} />
-        <Route path = "/signup" element = {<Signup />} />
-        <Route path = "/login" element = {<Signin />} />
-        <Route path = "/dashboard" element = { <PrivateRoute>  <Dashboard /> </PrivateRoute>} />
+        <Route path="/" element={<Home />} />
+        <Route path="/about" />
+        <Route path="/contacts" />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Signin />} />
+        <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+        <Route path="/profile" />
+        <Route path="/settings" />
       </Routes>
-    </>
+    </div>
   );
 };
 

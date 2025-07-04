@@ -1,6 +1,9 @@
 import { Link } from "react-router-dom";
+import { UserAuth } from "../context/AuthContex";
 
 const Navbar = () => {
+  const { session, signOut } = UserAuth();
+
   return (
     <div className="navbar bg-primary text-primary-content">
       <div className="flex-1">
@@ -11,6 +14,9 @@ const Navbar = () => {
           <li>
             <Link to="/" className="btn btn-ghost">Home</Link>
           </li>
+
+          {session && <Link to="/dashboard" className="btn btn-ghost">Dashboard</Link>}
+
           <li>
             <Link to="/about" className="btn btn-ghost">About Us</Link>
           </li>
@@ -21,61 +27,44 @@ const Navbar = () => {
       </div>
 
       <div className="flex gap-4 px-4">
-        <Link to="/login" className="btn btm-nav-label btn-neutral">
-          Login
-        </Link>
-        <Link to="/signup" className="btn btm-nav-label btn-neutral">
-          Signup
-        </Link>
-      </div>
-    </div>
+        {
+          session ? 
+            <div className="dropdown dropdown-end">
+              <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
+                <div className="w-10 rounded-full">
+                  <img
+                    alt="Tailwind CSS Navbar component"
+                    src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+                </div>
+              </div>
+              <ul
+                tabIndex={0}
+                className="menu menu-sm dropdown-content mt-3 z-[1] w-52 p-2 shadow bg-base-100 text-neutral-content rounded-box"
+              >
+                <li>
+                  <Link to="/profile" className="hover:bg-neutral-focus">Profile</Link>
+                </li>
+                <li>
+                  <Link to="/settings" className="hover:bg-neutral-focus">Settings</Link>
+                </li>
+                <li>
+                  <a onClick = {signOut} className="hover:bg-neutral-focus">Logout</a>
+                </li>
+              </ul>
+            </div> 
+          : 
+            <div className="flex space-x-4"> 
+                  <Link to="/login" className="btn btm-nav-label btn-neutral">
+                    Login
+                  </Link>
+                  <Link to="/signup" className="btn btm-nav-label btn-neutral">
+                    Signup
+                  </Link>
+                </div>
+                }
+              </div>
+            </div>
   );
 };
 
 export default Navbar;
-
-// OLD NAVBAR
-
-// import React from "react";
-// import { Link } from "react-router-dom";
-
-// const Navbar = () => {
-//   return (
-//     <nav className="bg-green-600 p-4 text-white flex justify-between items-center">
-//       <div className="flex items-center space-x-4">
-//         <h1 className="text-xl font-bold">Serenaid</h1>
-//         <ul className="flex space-x-6">
-//           <li className="rounded transform hover:scale-105 hover:bg-gray-800 hover:shadow-lg hover:text-green-400 hover:underline transition duration-200">
-//             <Link to="/" className="block px-4 py-2 w-full h-full">
-//               Home
-//             </Link>
-//           </li>
-//           <li className="rounded transform hover:scale-105 hover:bg-gray-800 hover:shadow-lg hover:text-green-400 hover:underline transition duration-200">
-//             <Link to="/about" className="block px-4 py-2 w-full h-full">
-//               About
-//             </Link>
-//           </li>
-//           <li className="rounded transform hover:scale-105 hover:bg-gray-800 hover:shadow-lg hover:text-green-400 hover:underline transition duration-200">
-//             <Link to="/contacts" className="block px-4 py-2 w-full h-full">
-//               Contact
-//             </Link>
-//           </li>
-//         </ul>
-//       </div>
-//       <ul className="flex space-x-6">
-//         <li className="rounded transform hover:scale-105 hover:bg-gray-800 hover:shadow-lg hover:text-green-400 hover:underline transition duration-200">
-//           <Link to="/" className="block px-4 py-2 w-full h-full">
-//             Login
-//           </Link>
-//         </li>
-//         <li className="rounded transform hover:scale-105 hover:bg-gray-800 hover:shadow-lg hover:text-green-400 hover:underline transition duration-200">
-//           <Link to="/about" className="block px-4 py-2 w-full h-full">
-//             Signup
-//           </Link>
-//         </li>
-//       </ul>
-//     </nav>
-//   );
-// };
-
-// export default Navbar;

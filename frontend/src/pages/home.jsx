@@ -1,5 +1,5 @@
 const Home = () => (
-  <div className="p-8 text-center">
+  <div className="p-8 text-center bg-black min-h-screen">
     <h2 className="text-3xl font-semibold mb-4 white">Serenaid</h2>
     <p>"Alarms That Care, Not Scare."</p>
   </div>

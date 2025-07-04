@@ -1,5 +1,6 @@
 import { createContext, useEffect, useState, useContext } from "react";
 import { supabase } from "../supabaseClient";
+import toast, { Toaster } from 'react-hot-toast';
 
 const AuthContext = createContext();
 
@@ -14,6 +15,9 @@ export const AuthContextProvider = ({children}) => {
         })
 
         if (error) {
+            if (error.code === "user_already_exists") toast.error("Email already registered");
+            else toast.error("An error occured please try again");
+            
             console.error("there was a problem signing up", error);
             return {success: false, error};
         }
@@ -30,7 +34,8 @@ export const AuthContextProvider = ({children}) => {
             })
 
             if(error) {
-                console.error("sign in error occured", error);
+                toast.error("Invalid Credentials");
+                console.log("sign in error occured", error);
                 return {success: false, error: error.message};
             }
 
@@ -38,6 +43,7 @@ export const AuthContextProvider = ({children}) => {
 
             return {success: true, data};
         } catch (error) {
+            toast.error("An error occured please try again");
             console.error("an error occured", error);
         }
     }
@@ -57,6 +63,7 @@ export const AuthContextProvider = ({children}) => {
         const {error} = supabase.auth.signOut();
 
         if (error) {
+            toast.error("An error occured please try again");
             console.error("there was a problem signing out", error);
         }
     }
