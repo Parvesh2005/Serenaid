@@ -22,7 +22,7 @@ const Signup = () => {
       const result = await signUpNewUser(email, password);
 
       if (result.success) {
-        navigate("/dashboard");
+        navigate("/profileComp");
       } else {
         console.log(result);
         if (result.error.code === "user_already_exists") setError("Email already registered");

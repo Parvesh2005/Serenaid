@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Dashboard from "./pages/dashboard";
 import Signin from "./pages/Signin";
 import PrivateRoute from "./components/PrivateRoute";
+import DynamicUserForm from "./pages/profileComp";
 
 const App = () => {
   return (
@@ -22,6 +23,7 @@ const App = () => {
         <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
         <Route path="/profile" />
         <Route path="/settings" />
+        <Route path="/profileComp" element={<PrivateRoute><DynamicUserForm/></PrivateRoute>}/>
       </Routes>
     </div>
   );
