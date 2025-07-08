@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { UserAuth } from "../context/AuthContex";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 
 const DynamicUserForm = () => {
   const { session } = UserAuth();
