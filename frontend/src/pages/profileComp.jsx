@@ -1,9 +1,15 @@
 import { useState } from "react";
+import { UserAuth } from "../context/AuthContex";
+import { useNavigate } from "react-router";
 
 const DynamicUserForm = () => {
+  const { session } = UserAuth();
+
   const [role, setRole] = useState("");
   const [formData, setFormData] = useState({});
   const [submittedData, setSubmittedData] = useState(null);
+
+  const navigate = useNavigate();
 
   const commonFields = ["name", "contact", "hospital", "department"];
   const roleFields = {
@@ -33,13 +39,38 @@ const DynamicUserForm = () => {
   const handleRoleChange = (e) => {
     const newRole = e.target.value;
     setRole(newRole);
-    setFormData({}); // Clear previous data
+    setFormData({});
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmittedData({ role, ...formData });
-    console.log("Submitted:", { role, ...formData });
+
+    const email = session?.user?.email || "";
+    const data = { email, role, ...formData };
+
+    setSubmittedData(data);
+
+    let route = "";
+
+    if (role === "doctor") route = "http://localhost:5000/api/v1/doctors";
+    else if (role === "admin") route = "http://localhost:5000/api/v1/admins";
+    else if (role === "nurse") route = "http://localhost:5000/api/v1/nurses";
+    else if (role === "patient") route = "http://localhost:5000/api/v1/patients";
+
+    try {
+      const response = await fetch(route, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+      console.log("Submission successful:", result);
+
+      navigate('/dashboard');
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
   };
 
   return (
@@ -92,12 +123,12 @@ const DynamicUserForm = () => {
             </div>
           )}
 
-          {submittedData && (
+          {/* {submittedData && (
             <div className="mt-4 p-4 bg-base-300 rounded-lg text-sm">
               <h3 className="font-semibold">Form Submitted:</h3>
               <pre className="whitespace-pre-wrap">{JSON.stringify(submittedData, null, 2)}</pre>
             </div>
-          )}
+          )} */}
         </form>
       </div>
     </div>
