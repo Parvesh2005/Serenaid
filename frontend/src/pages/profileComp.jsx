@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { UserAuth } from "../context/AuthContex";
 import { useNavigate } from "react-router-dom";
+const backendPort = import.meta.env.VITE_PORT;
+const baseURL = `http://localhost:${backendPort}/api/v1`;
 
 const DynamicUserForm = () => {
   const { session } = UserAuth();
@@ -13,7 +15,7 @@ const DynamicUserForm = () => {
 
   const commonFields = ["name", "contact", "hospital", "department"];
   const roleFields = {
-    doctor: [...commonFields],
+    doctor: [...commonFields, "building"],
     admin: [...commonFields],
     nurse: [...commonFields, "building", "ward"],
     patient: [...commonFields, "building", "ward", "bedNo", "doctorAssigned", "nurseAssigned"],
@@ -52,10 +54,10 @@ const DynamicUserForm = () => {
 
     let route = "";
 
-    if (role === "doctor") route = "http://localhost:5000/api/v1/doctors";
-    else if (role === "admin") route = "http://localhost:5000/api/v1/admins";
-    else if (role === "nurse") route = "http://localhost:5000/api/v1/nurses";
-    else if (role === "patient") route = "http://localhost:5000/api/v1/patients";
+    if (role === "doctor") route = `${baseURL}/doctors`;
+    else if (role === "admin") route = `${baseURL}/admins`;
+    else if (role === "nurse") route = `${baseURL}/nurses`;
+    else if (role === "patient") route = `${baseURL}/patients`;
 
     try {
       const response = await fetch(route, {
@@ -111,6 +113,8 @@ const DynamicUserForm = () => {
                   value={formData[field] || ""}
                   onChange={handleChange}
                   required
+                  pattern={field === "contact" ? "^[0-9]{10}$" : undefined}
+                  title={field === "contact" ? "Please enter a 10-digit phone number" : undefined}
                 />
               </div>
             ))}
