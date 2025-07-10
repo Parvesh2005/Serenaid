@@ -1,6 +1,11 @@
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { UserAuth } from "../context/AuthContex"
 import { useEffect, useState } from "react";
+import AdminDashboard from "../components/dashboard/adminDashboard/admin";
+import DoctorDashboard from "../components/dashboard/doctorDashboard/doctor";
+import NurseDashboard from "../components/dashboard/nurseDashboard/nurse";
+import DefaultDashboard from "../components/dashboard/default";
+import PatientDashboard from "../components/dashboard/patientDashboard/patient";
 
 const backendPort = import.meta.env.VITE_PORT;
 const baseURL = `http://localhost:${backendPort}/api/v1`;
@@ -12,12 +17,12 @@ const Dashboard = () => {
     const [role, setRole] = useState("");
 
     const commonFields = ["name", "contact", "hospital", "department"];
-  const roleFields = {
-    doctor: [...commonFields, "building"],
-    admin: [...commonFields],
-    nurse: [...commonFields, "building", "ward"],
-    patient: [...commonFields, "building", "ward", "bedNo", "doctorAssigned", "nurseAssigned"],
-  };
+    const roleFields = {
+      doctor: [...commonFields, "building"],
+      admin: [...commonFields],
+      nurse: [...commonFields, "building", "ward"],
+      patient: [...commonFields, "building", "ward", "bedNo", "doctorAssigned", "nurseAssigned"],
+    };
 
   const labelMap = {
     name: "Name",
@@ -43,29 +48,39 @@ const Dashboard = () => {
     }
 
     useEffect(() => {
-    const fetchUserData = async () => {
-      if (!session?.user?.email) return;
+      const fetchUserData = async () => {
+        if (!session?.user?.email) return;
 
-      try {
-        const roles = ["doctor", "admin", "nurse", "patient"];
-        for (let r of roles) {
-          const res = await fetch(`${baseURL}/${r}s/email/${session.user.email}`);
-          if (res.ok) {
-            const data = await res.json();
-            if (data && data[r]) {
-            setUserData(data[r]);
-            setRole(r);
-            break;
+        try {
+          const roles = ["doctor", "admin", "nurse", "patient"];
+          let found = false;
+
+          for (let r of roles) {
+            const res = await fetch(`${baseURL}/${r}s/email/${session.user.email}`);
+            
+            if (res.ok) {
+              const data = await res.json();
+
+              if (data && data[r]) {
+                setUserData(data[r]);
+                setRole(r);
+                found = true;
+                break;
+              }
             }
           }
-        }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    };
 
-    fetchUserData();
-  }, [session]);
+          if (!found) {
+            setUserData("incomplete");
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+          setUserData("incomplete");
+        }
+      };
+
+      fetchUserData();
+    }, [session]);
 
 
     if (!session?.user?.email) 
@@ -80,34 +95,41 @@ const Dashboard = () => {
     console.log(session);
 
     return <div className="h-screen overflow-y-auto bg-base-100 p-4">
-    <div className="max-w-lg mx-auto bg-white shadow-lg p-6 rounded-md">
-        <h1 className="text-3xl font-bold mb-4 text-primary">
+    <div>
+        {/* <h1 className="text-3xl font-bold mb-4 text-primary">
           {role.charAt(0).toUpperCase() + role.slice(1)} Dashboard
         </h1>
         <h2 className="text-lg mb-6 text-secondary">
           Welcome, {session.user.email}
-        </h2>
+        </h2> */}
 
         
-   {userData ? (
-            <div className="grid grid-cols-1 gap-4">
-            {role && roleFields[role].map((field) => (
-              <div className="form-control" key={field}>
-                <label className="label">
-                    <span className="label-text font-semibold text-primary">
-                    {labelMap[field] || field}
-                    </span>
-                </label>
-                <p className="pl-2 text-neutral">
-                    {userData[field] ?? "Not provided"}
-                </p>
-                </div>
-            ))}
-             </div>
+        {userData === "incomplete" ? (
+          <div>
+            <p className="text-warning">Please complete your profile before accessing the dashboard.</p>
+            <Link to="/profilecomp" className="link link-error">You can complete your profile here.</Link>
+          </div>
+        ) : userData ? (
+          <>
+            {
+              role === "admin" ? <AdminDashboard user={userData} /> :
+              role === "doctor" ? (
+                userData.approved ? (
+                  <DoctorDashboard user={userData} />
+                ) : (
+                  <div className="text-warning">
+                    <p>Your profile is pending approval by the admin.</p>
+                  </div>
+                )
+              ) :
+              role === "nurse" ? <NurseDashboard user={userData} /> :
+              role === "patient" ? <PatientDashboard user={userData} /> :
+              <DefaultDashboard />
+            }
+          </>
         ) : (
-            <p>Loading user data...</p>
+          <p>Loading user data...</p>
         )}
-
 
         <button onClick={handleSignOut} className="btn btn-primary mt-6">
           Sign Out
