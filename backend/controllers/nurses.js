@@ -35,9 +35,41 @@ const getNurseById = asyncWrapper(async (req, res) => {
   res.status(200).json({ nurse });
 });
 
+
+const getUnapprovedNurses = asyncWrapper(async (req, res) => {
+  const { hospital } = req.query;
+  const filter = { approved: false };
+  if (hospital) filter.hospital = hospital;
+  console.log("Fetching unapproved nurses for:", filter);
+  const nurses = await Nurse.find(filter);
+  res.status(200).json({ nurses: nurses });
+});
+
+const getApprovedNurses = asyncWrapper(async (req, res) => {
+  const { hospital } = req.query;
+  const filter = { approved: true };
+  if (hospital) filter.hospital = hospital;
+
+  const nurses = await Nurse.find(filter);
+  res.status(200).json({ nurses: nurses });
+});
+
+const approveNurse = asyncWrapper(async (req, res) => {
+  const nurse = await Nurse.findByIdAndUpdate(
+    req.params.id,
+    { approved: true },
+    { new: true }
+  );
+  if (!nurse) return res.status(404).json({ message: "Nurse not found" });
+  res.status(200).json({ message: "Nurse approved", nurse });
+});
+
 module.exports = {
-    createNurse,
-    getAllNurses,
-    getNurseByEmail,
-    getNurseById
-}
+  createNurse,
+  getAllNurses,
+  getNurseByEmail,
+  getNurseById,
+  getUnapprovedNurses,
+  getApprovedNurses,
+  approveNurse
+};

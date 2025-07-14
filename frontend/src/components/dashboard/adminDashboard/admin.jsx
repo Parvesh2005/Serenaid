@@ -5,32 +5,30 @@ const backendPort = import.meta.env.VITE_PORT;
 const baseURL = `http://localhost:${backendPort}/api/v1`;
 
 const AdminDashboard = ({ user, signOut }) => {
+  const [role, setRole] = useState("doctor");
   const [tab, setTab] = useState("pending");
-  const [doctors, setDoctors] = useState([]);
+  const [data, setData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const fetchDoctors = async () => {
+  const fetchData = async () => {
     try {
-      const url =
-        tab === "pending"
-          ? `${baseURL}/doctors/unapproved?hospital=${user.hospital}`
-          : `${baseURL}/doctors/approved?hospital=${user.hospital}`;
-
+      const endpoint = tab === "pending" ? "unapproved" : "approved";
+      const url = `${baseURL}/${role}s/${endpoint}?hospital=${user.hospital}`;
       const res = await fetch(url);
-      const data = await res.json();
-      setDoctors(data.doctors || []);
+      const json = await res.json();
+      setData(json[`${role}s`] || []);
     } catch (err) {
-      console.error("Error fetching doctors:", err);
+      console.error("Error fetching data:", err);
     }
   };
 
   const handleApprove = async (id) => {
     try {
-      const res = await fetch(`${baseURL}/doctors/approve/${id}`, {
+      const res = await fetch(`${baseURL}/${role}s/approve/${id}`, {
         method: "PATCH",
       });
       if (res.ok) {
-        setDoctors((prev) => prev.filter((doc) => doc._id !== id));
+        setData((prev) => prev.filter((item) => item._id !== id));
       }
     } catch (err) {
       console.error("Approval error:", err);
@@ -38,14 +36,14 @@ const AdminDashboard = ({ user, signOut }) => {
   };
 
   useEffect(() => {
-    fetchDoctors();
-  }, [tab]);
+    fetchData();
+  }, [tab, role]);
 
-  const filteredDoctors = doctors.filter((doc) => {
+  const filteredData = data.filter((item) => {
     const q = searchQuery.toLowerCase();
     return (
-      doc.name.toLowerCase().includes(q) ||
-      doc.department.toLowerCase().includes(q)
+      item.name.toLowerCase().includes(q) ||
+      item.department?.toLowerCase().includes(q)
     );
   });
 
@@ -57,34 +55,47 @@ const AdminDashboard = ({ user, signOut }) => {
           Welcome, <span className="font-medium">{user.name}</span> from {user.hospital}
         </p>
 
-        <input
-          type="text"
-          placeholder="Search by name"
-          className="input input-bordered w-full mb-4"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
+        <div className="flex gap-4 flex-wrap mb-4">
+          <select
+            className="select select-bordered"
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+          >
+            <option value="doctor">Doctor</option>
+            <option value="nurse">Nurse</option>
+          </select>
+
+          <input
+            type="text"
+            placeholder="Search by name or department"
+            className="input input-bordered w-full max-w-xs"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
 
         <div className="space-y-3">
-          {filteredDoctors.map((doc) => (
-            <div key={doc._id} className="card bg-base-200 p-4 shadow-md">
+          {filteredData.map((item) => (
+            <div key={item._id} className="card bg-base-200 p-4 shadow-md">
               <p className="font-semibold">
-                Name: <span className="text-neutral-content">{doc.name}</span>
+                Name: <span className="text-neutral-content">{item.name}</span>
               </p>
               <p className="font-semibold">
-                Department: <span className="text-neutral-content">{doc.department}</span>
+                Department: <span className="text-neutral-content">{item.department}</span>
               </p>
               {tab === "pending" && (
                 <button
                   className="btn btn-success mt-2"
-                  onClick={() => handleApprove(doc._id)}
+                  onClick={() => handleApprove(item._id)}
                 >
                   Approve
                 </button>
               )}
             </div>
           ))}
-          {filteredDoctors.length === 0 && <p className="text-center">No doctors found.</p>}
+          {filteredData.length === 0 && (
+            <p className="text-center">No {role}s found.</p>
+          )}
         </div>
 
         <button className="btn btn-error mt-8" onClick={signOut}>
@@ -107,7 +118,7 @@ const AdminDashboard = ({ user, signOut }) => {
           <Check className="h-5 w-5" />
           <span className="btm-nav-label">Approved</span>
         </button>
-        <button onClick={() => alert("More options coming soon...")}> 
+        <button onClick={() => alert("More options coming soon...")}>
           <MoreHorizontal className="h-5 w-5" />
           <span className="btm-nav-label">More</span>
         </button>

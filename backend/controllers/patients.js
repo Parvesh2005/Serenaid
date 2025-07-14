@@ -36,11 +36,15 @@ const getPatientById = asyncWrapper(async (req, res) => {
 });
 
 const getUnapprovedPatients = asyncWrapper(async (req, res) => {
-  const { department, building } = req.query;
+  const { department, building, hospital, doctorName } = req.query;
 
-  const filter = { approved: false };
-  if (department) filter.department = department;
-  if (building) filter.building = building;
+  const filter = {
+    approved: false,
+    department,
+    building,
+    hospital,
+    doctorAssigned: doctorName
+  };
   
   // const unapprovedPatients = await Patient.find(filter);
 
@@ -55,11 +59,15 @@ const getUnapprovedPatients = asyncWrapper(async (req, res) => {
 });
 
 const getApprovedPatients = asyncWrapper(async (req, res) => {
-  const { department, building } = req.query;
+  const { department, building, hospital, doctorName } = req.query;
 
-  const filter = { approved: true };
-  if (department) filter.department = department;
-  if (building) filter.building = building;
+  const filter = {
+    approved: true,
+    department,
+    building,
+    hospital,
+    doctorAssigned: doctorName
+  };
 
   const approvedPatients = await Patient.find(filter);
 
@@ -83,6 +91,21 @@ const approvePatient = asyncWrapper(async (req, res) => {
 
   res.status(200).json({ message: "Patient approved", patient });
 });
+const getApprovedPatientsForNurse = asyncWrapper(async (req, res) => {
+  const { hospital, nurseName, department } = req.query;
+
+  const filter = {
+    approved: true,
+    hospital,
+    department,
+    nurseAssigned: nurseName,
+  };
+
+  const patients = await Patient.find(filter);
+
+  return res.status(200).json({ patients });
+});
+
 
 module.exports = {
     createPatient,
@@ -91,6 +114,7 @@ module.exports = {
     getPatientById,
     getUnapprovedPatients,
     getApprovedPatients,
-    approvePatient
+    approvePatient,
+    getApprovedPatientsForNurse
 
 }

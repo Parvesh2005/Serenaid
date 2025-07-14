@@ -12,9 +12,10 @@ const DoctorDashboard = ({ user, signOut }) => {
   const fetchPatients = async () => {
     try {
       const url =
-        tab === "pending"
-          ? `${baseURL}/patients/unapproved?department=${user.department}&building=${user.building}`
-          : `${baseURL}/patients/approved?department=${user.department}&building=${user.building}`;
+  tab === "pending"
+    ? `${baseURL}/patients/unapproved?department=${user.department}&building=${user.building}&hospital=${user.hospital}&doctorName=${encodeURIComponent(user.name)}`
+    : `${baseURL}/patients/approved?department=${user.department}&building=${user.building}&hospital=${user.hospital}&doctorName=${encodeURIComponent(user.name)}`;
+
 
       const res = await fetch(url);
       const data = await res.json();
