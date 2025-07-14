@@ -123,7 +123,15 @@ const Dashboard = () => {
                 )
               ) :
               role === "nurse" ? <NurseDashboard user={userData} /> :
-              role === "patient" ? <PatientDashboard user={userData} /> :
+              role === "patient" ? (
+                userData.approved ? (
+                  <PatientDashboard user={userData} />
+                ) : (
+                  <div className="text-warning">
+                    <p>Your profile is pending approval by the Doctor.</p>
+                  </div>
+                )
+              )  :
               <DefaultDashboard />
             }
           </>
