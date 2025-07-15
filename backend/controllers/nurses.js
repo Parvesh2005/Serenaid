@@ -29,7 +29,7 @@ const getNurseById = asyncWrapper(async (req, res) => {
   const nurse = await Nurse.findById(id);
 
   if (!Nurse) {
-    ;return res.status(404).json({ error: 'Nurse not found' });
+    return res.status(404).json({ error: 'Nurse not found' });
   }
 
   res.status(200).json({ nurse });
@@ -40,7 +40,7 @@ const getUnapprovedNurses = asyncWrapper(async (req, res) => {
   const { hospital } = req.query;
   const filter = { approved: false };
   if (hospital) filter.hospital = hospital;
-  console.log("Fetching unapproved nurses for:", filter);
+  // console.log("Fetching unapproved nurses for:", filter);
   const nurses = await Nurse.find(filter);
   res.status(200).json({ nurses: nurses });
 });

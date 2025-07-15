@@ -147,9 +147,9 @@ const Dashboard = () => {
           <p>Loading user data...</p>
         )}
 
-        <button onClick={handleSignOut} className="btn btn-primary mt-6">
+        {/* <button onClick={handleSignOut} className="btn btn-primary mt-6">
           Sign Out
-        </button>
+        </button> */}
       </div>
     </div>
 }

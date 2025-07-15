@@ -8,6 +8,7 @@ const admins = require('./routes/admins');
 const doctors = require('./routes/doctors');
 const nurses = require('./routes/nurses');
 const patients = require('./routes/patients');
+const alarms = require('./routes/alarms');
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use('/api/v1/admins', admins);
 app.use('/api/v1/doctors', doctors);
 app.use('/api/v1/nurses', nurses);
 app.use('/api/v1/patients', patients);
+app.use('/api/v1/alarms', alarms);
 
 const port = process.env.PORT || 5000;
 
