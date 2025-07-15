@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Check, MoreHorizontal, Clock } from "lucide-react";
+import { Check, MoreHorizontal, Clock, UserCircle2, Building2, CheckCircle, Hourglass } from "lucide-react";
 
 const backendPort = import.meta.env.VITE_PORT;
 const baseURL = `http://localhost:${backendPort}/api/v1`;
@@ -55,7 +55,7 @@ const AdminDashboard = ({ user, signOut }) => {
           Welcome, <span className="font-medium">{user.name}</span> from {user.hospital}
         </p>
 
-        <div className="flex gap-4 flex-wrap mb-4">
+        <div className="flex gap-4 flex-wrap mb-6">
           <select
             className="select select-bordered"
             value={role}
@@ -74,18 +74,38 @@ const AdminDashboard = ({ user, signOut }) => {
           />
         </div>
 
-        <div className="space-y-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredData.map((item) => (
-            <div key={item._id} className="card bg-base-200 p-4 shadow-md">
-              <p className="font-semibold">
-                Name: <span className="text-neutral-content">{item.name}</span>
-              </p>
-              <p className="font-semibold">
-                Department: <span className="text-neutral-content">{item.department}</span>
-              </p>
+            <div
+              key={item._id}
+              className="card bg-base-200 p-4 border border-base-300 shadow-md relative"
+            >
+              <div className="absolute top-2 right-2">
+                {tab === "pending" ? (
+                  <span className="badge badge-warning gap-1">
+                    <Hourglass size={14} />
+                    Pending
+                  </span>
+                ) : (
+                  <span className="badge badge-success gap-1">
+                    <CheckCircle size={14} />
+                    Approved
+                  </span>
+                )}
+              </div>
+
+              <div className="flex items-center gap-2 mb-2">
+                <UserCircle2 className="text-primary" size={20} />
+                <p className="font-semibold text-lg">{item.name}</p>
+              </div>
+              <div className="flex items-center gap-2 mb-1">
+                <Building2 className="text-secondary" size={16} />
+                <p className="text-sm">Department: <span className="font-medium">{item.department}</span></p>
+              </div>
+
               {tab === "pending" && (
                 <button
-                  className="btn btn-success mt-2"
+                  className="btn btn-sm btn-success mt-3"
                   onClick={() => handleApprove(item._id)}
                 >
                   Approve
@@ -94,11 +114,11 @@ const AdminDashboard = ({ user, signOut }) => {
             </div>
           ))}
           {filteredData.length === 0 && (
-            <p className="text-center">No {role}s found.</p>
+            <p className="text-center col-span-full">No {role}s found.</p>
           )}
         </div>
 
-        <button className="btn btn-error mt-8" onClick={signOut}>
+        <button className="btn btn-error mt-10" onClick={signOut}>
           Sign Out
         </button>
       </div>
