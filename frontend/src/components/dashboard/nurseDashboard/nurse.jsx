@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Check, Bell } from "lucide-react";
+import { Check, Bell, AlertTriangle, CheckCircle, User, Hospital, BedDouble } from "lucide-react";
 
 const backendPort = import.meta.env.VITE_PORT;
 const baseURL = `http://localhost:${backendPort}/api/v1`;
@@ -41,14 +41,13 @@ const NurseDashboard = ({ user, signOut }) => {
 
     if (tab === "alarms") {
       fetchAlarms();
-      intervalId = setInterval(fetchAlarms, 1000);
+      intervalId = setInterval(fetchAlarms, 2000);
     }
 
     return () => {
       clearInterval(intervalId);
     };
   }, [tab]);
-
 
   const filteredPatients = patients.filter((p) => {
     const q = searchQuery.toLowerCase();
@@ -59,13 +58,19 @@ const NurseDashboard = ({ user, signOut }) => {
     );
   });
 
+  const sortedAlarms = [...alarms].sort((a, b) => {
+    if (a.status === "pending" && b.status !== "pending") return -1;
+    if (a.status !== "pending" && b.status === "pending") return 1;
+    return new Date(b.createdAt) - new Date(a.createdAt);
+  });
+
   return (
     <div className="min-h-screen bg-base-100 flex flex-col justify-between">
       <div className="p-6">
         <h1 className="text-3xl font-bold text-primary mb-2">Nurse Dashboard</h1>
         <p className="text-secondary mb-4">
           Welcome, <span className="font-medium">{user.name}</span><br />
-          Hospital: {user.hospital}
+          Hospital: {user.hospital} | Department: {user.department}
         </p>
 
         {tab === "patients" && (
@@ -78,17 +83,26 @@ const NurseDashboard = ({ user, signOut }) => {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
 
-            <div className="space-y-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredPatients.map((p) => (
-                <div key={p._id} className="card bg-base-200 p-4 shadow-md">
-                  <p className="font-semibold">Name: <span className="text-neutral-content">{p.name}</span></p>
-                  <p className="font-semibold">Ward: <span className="text-neutral-content">{p.ward}</span></p>
-                  <p className="font-semibold">Bed No: <span className="text-neutral-content">{p.bedNo}</span></p>
-                  <p className="font-semibold">Doctor: <span className="text-neutral-content">{p.doctorAssigned}</span></p>
+                <div key={p._id} className="card bg-base-200 p-4 shadow-md border-l-4 border-primary">
+                  <div className="flex items-center gap-2 mb-2">
+                    <User className="text-primary" size={18} />
+                    <p className="font-semibold">{p.name}</p>
+                  </div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <Hospital className="text-secondary" size={16} />
+                    <p>Ward: <span className="font-medium">{p.ward}</span></p>
+                  </div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <BedDouble className="text-secondary" size={16} />
+                    <p>Bed No: <span className="font-medium">{p.bedNo}</span></p>
+                  </div>
+                  <div className="badge badge-info mt-2">Doctor: {p.doctorAssigned}</div>
                 </div>
               ))}
               {filteredPatients.length === 0 && (
-                <p className="text-center">No patients assigned to you.</p>
+                <p className="text-center col-span-full">No patients assigned to you.</p>
               )}
             </div>
           </>
@@ -96,10 +110,23 @@ const NurseDashboard = ({ user, signOut }) => {
 
         {tab === "alarms" && (
           <>
-            <h2 className="text-xl font-bold text-primary mb-4">Pending Alarms</h2>
-            <div className="space-y-3">
-              {alarms.map((alarm) => (
-                <div key={alarm._id} className="card bg-base-200 p-4 shadow-md">
+            <h2 className="text-xl font-bold text-primary mb-4">Your Alarms</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {sortedAlarms.map((alarm) => (
+                <div
+                  key={alarm._id}
+                  className={`card p-4 shadow-md border-2 relative transition-all duration-300 ${
+                    alarm.status === "pending" ? "border-red-500 animate-pulse" : "border-green-500"
+                  }`}
+                >
+                  <div className="absolute top-2 right-2">
+                    {alarm.status === "pending" ? (
+                      <span className="badge badge-error gap-1"><AlertTriangle size={14} /> Pending</span>
+                    ) : (
+                      <span className="badge badge-success gap-1"><CheckCircle size={14} /> Resolved</span>
+                    )}
+                  </div>
+
                   <p className="font-semibold">Patient: <span className="text-neutral-content">{alarm.patient}</span></p>
                   <p className="font-semibold">Type: <span className="text-neutral-content capitalize">{alarm.type}</span></p>
                   <p className="font-semibold">Doctor: <span className="text-neutral-content">{alarm.doctor}</span></p>
@@ -128,13 +155,13 @@ const NurseDashboard = ({ user, signOut }) => {
                         }
                       }}
                     >
-                      Mark as Resolved
+                      Resolve Alarm
                     </button>
                   )}
                 </div>
               ))}
               {alarms.length === 0 && (
-                <p className="text-center">No alarms at the moment.</p>
+                <p className="text-center col-span-full">No alarms at the moment.</p>
               )}
             </div>
           </>
