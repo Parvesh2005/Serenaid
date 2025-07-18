@@ -8,6 +8,7 @@ import Dashboard from "./pages/dashboard";
 import Signin from "./pages/Signin";
 import PrivateRoute from "./components/PrivateRoute";
 import DynamicUserForm from "./pages/profileComp";
+import ContactPage from "./pages/contact";
 
 const App = () => {
   return (
@@ -18,7 +19,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />}/>
-        <Route path="/contacts" />
+        <Route path="/contacts" element={<ContactPage />}/>
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Signin />} />
         <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />

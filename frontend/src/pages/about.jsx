@@ -55,6 +55,9 @@ const About = () => {
           <FeatureCard icon={<ShieldCheck size={36} />} title="Reliable & Secure" desc="Data integrity and fast response pipelines, compliant with medical safety norms." />
         </div>
       </div>
+      <footer className="mt-24 mb-4 text-sm text-center text-base-content/70">
+        © 2025 Serenade | Made with ❤️ for smarter care.
+      </footer>
     </div>
   );
 };
