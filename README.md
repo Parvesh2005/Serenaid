@@ -7,12 +7,12 @@ Serenaid is a modern, full-stack hospital alarm system that ensures safe, rapid,
 
 ## 🚀 Features
 
- 🛎️ **Real-Time Alarms** – Trigger and track alerts instantly across user roles
- 🧠 **Care-Focused Design** – Prioritizes meaningful alerts and patient well-being
- 🧑‍⚕️ **Role-Based Dashboards** – Separate panels for **Doctor**, **Nurse**, and **Admin**
- 🔐 **Secure Access** – Authenticated user flows for patient data protection
- 📲 **Responsive UI** – Optimized for mobile and desktop with modern design
- ⚡ **Live Notifications** – New alarms update dashboards in real-time
+ - **Real-Time Alarms** – Trigger and track alerts instantly across user roles
+ - **Care-Focused Design** – Prioritizes meaningful alerts and patient well-being
+ - **Role-Based Dashboards** – Separate panels for **Doctor**, **Nurse**, and **Admin**
+ - **Secure Access** – Authenticated user flows for patient data protection
+ - **Responsive UI** – Optimized for mobile and desktop with modern design
+ - **Live Notifications** – New alarms update dashboards in real-time
 
 ---
 
