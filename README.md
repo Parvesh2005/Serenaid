@@ -28,8 +28,7 @@ Serenaid is a modern, full-stack hospital alarm system that ensures safe, rapid,
 ### Backend
 - **Node.js + Express.js**
 - **MongoDB** with **Mongoose**
-- **JWT** for authentication
-- **Socket.io** (for real-time alarms)
+- **SupaBase** for authentication
 
 ---
 
